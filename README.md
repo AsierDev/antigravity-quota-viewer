@@ -12,7 +12,7 @@ Comprehensive visualization of AI model quota status in Antigravity with predict
 - 📊 **Visual Dashboard** with modern glassmorphism design
 - 🔮 **Quota Exhaustion Prediction** based on burn rate
 - 📈 **Real-time Burn Rate Analysis** per model
-- ⚡ **Automatic Detection** of current active model
+- 🏥 **Overall Health Score** showing weighted average of all quotas
 - 🎯 **Customizable Alerts** for low specific quotas
 - 💳 **Prompt Credits Tracking** (available vs total)
 - 📱 **Integrated Status Bar** with summary info
@@ -96,8 +96,8 @@ The dashboard displays:
 
 ```bash
 # Clone repository
-git clone https://github.com/asier/antigravity-quota-viewer
-cd antigravity-quota-viewer
+git clone https://github.com/AsierDev/antigravity_cuota_viewer
+cd antigravity_cuota_viewer
 
 # Install dependencies
 npm install
@@ -174,7 +174,7 @@ Contributions are welcome!
 
 ## 🐛 Issues
 
-Report bugs or request features on [GitHub Issues](https://github.com/asier/antigravity-quota-viewer/issues)
+Report bugs or request features on [GitHub Issues](https://github.com/AsierDev/antigravity_cuota_viewer/issues)
 
 ## 📄 License
 
@@ -209,7 +209,7 @@ Visualización exhaustiva del estado de cuotas de modelos AI en Antigravity con 
 - 📊 **Dashboard visual** con diseño glassmorphism moderno
 - 🔮 **Predicción de agotamiento** de cuotas basada en burn rate
 - 📈 **Análisis de burn rate** por modelo en tiempo real
-- ⚡ **Detección automática** del modelo activo actual
+- 🏥 **Overall Health Score** mostrando promedio ponderado de cuotas
 - 🎯 **Alertas personalizables** cuando la cuota está baja
 - 💳 **Seguimiento de Prompt Credits** disponibles
 - 📱 **Status bar integrado** con información resumida
