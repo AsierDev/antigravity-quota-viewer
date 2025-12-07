@@ -1,0 +1,105 @@
+{
+    "name": "antigravity-quota-viewer",
+    "displayName": "Antigravity Quota Viewer",
+    "description": "Visualización exhaustiva del estado de cuotas de modelos AI en Antigravity con análisis predictivo y dashboard moderno",
+    "version": "1.0.0",
+    "publisher": "asier",
+    "icon": "assets/icon.png",
+    "engines": {
+        "vscode": "^1.85.0"
+    },
+    "categories": [
+        "Other",
+        "Visualization"
+    ],
+    "keywords": [
+        "antigravity",
+        "quota",
+        "ai",
+        "usage",
+        "dashboard",
+        "analytics"
+    ],
+    "activationEvents": [
+        "onStartupFinished"
+    ],
+    "main": "./out/extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "quotaViewer.showDashboard",
+                "title": "Quota Viewer: Open Dashboard",
+                "icon": "$(dashboard)"
+            },
+            {
+                "command": "quotaViewer.refresh",
+                "title": "Quota Viewer: Refresh Now"
+            },
+            {
+                "command": "quotaViewer.showQuickStatus",
+                "title": "Quota Viewer: Quick Status"
+            }
+        ],
+        "configuration": {
+            "title": "Quota Viewer",
+            "properties": {
+                "quotaViewer.enabled": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Enable automatic quota monitoring",
+                    "order": 1
+                },
+                "quotaViewer.pollingInterval": {
+                    "type": "number",
+                    "default": 120,
+                    "minimum": 30,
+                    "description": "Polling interval in seconds (minimum: 30s)",
+                    "order": 2
+                },
+                "quotaViewer.pinnedModels": {
+                    "type": "array",
+                    "default": [],
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Model IDs to pin in the status bar",
+                    "order": 3
+                },
+                "quotaViewer.alertThreshold": {
+                    "type": "number",
+                    "default": 20,
+                    "minimum": 5,
+                    "maximum": 50,
+                    "description": "Show warning when quota falls below this percentage",
+                    "order": 4
+                }
+            }
+        }
+    },
+    "scripts": {
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "lint": "eslint src --ext ts",
+        "test": "jest",
+        "test:watch": "jest --watch",
+        "test:coverage": "jest --coverage",
+        "package": "npm run compile && npx @vscode/vsce package"
+    },
+    "devDependencies": {
+        "@types/jest": "^30.0.0",
+        "@types/node": "^20.0.0",
+        "@types/vscode": "^1.85.0",
+        "@typescript-eslint/eslint-plugin": "^6.0.0",
+        "@typescript-eslint/parser": "^6.0.0",
+        "@vscode/vsce": "^3.0.0",
+        "eslint": "^8.0.0",
+        "jest": "^30.2.0",
+        "ts-jest": "^29.4.6",
+        "typescript": "^5.3.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/asier/antigravity-quota-viewer"
+    },
+    "license": "MIT"
+}
