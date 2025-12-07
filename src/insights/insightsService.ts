@@ -172,29 +172,35 @@ export class InsightsService {
   /**
    * Detect if this is the active model
    */
+  /**
+   * Detect if this is the active model
+   */
   private detectActiveModel(model: ModelQuota, snapshot: QuotaSnapshot): boolean {
-    // Strategy 1: Highest burn rate
-    if (this.history.length >= 2) {
-      const burnRates = snapshot.models.map(m => ({
-        id: m.modelId,
-        rate: this.calculateBurnRate(m.modelId)
-      }));
-
-      const maxBurnRate = Math.max(...burnRates.map(b => b.rate));
-      if (maxBurnRate > 0.5) {
-        const activeId = burnRates.find(b => b.rate === maxBurnRate)?.id;
-        if (activeId === model.modelId) return true;
+    // Strategy 1: Significant Burn Rate (consumption per hour)
+    // Only consider active if consumption is clearly visible (> 1% per hour)
+    const burnRate = this.calculateBurnRate(model.modelId);
+    
+    if (burnRate > 1.0) {
+      // Check if this model has the highest burn rate of all
+      const allBurnRates = snapshot.models.map(m => this.calculateBurnRate(m.modelId));
+      const maxBurnRate = Math.max(...allBurnRates);
+      
+      if (burnRate === maxBurnRate) {
+        return true;
       }
     }
 
-    // Strategy 2: Last known active model
-    if (this.lastActiveModelId === model.modelId) return true;
-
-    // Strategy 3: Lowest remaining as fallback
-    const lowestRemaining = Math.min(...snapshot.models.map(m => m.remainingPercent));
-    if (model.remainingPercent === lowestRemaining && lowestRemaining < 90) {
+    // Strategy 2: Persistence (Last known active model)
+    // Only stick to last active if we don't have a new clear winner
+    // and the last active model is still in the list
+    if (this.lastActiveModelId === model.modelId) {
+      // But verify it hasn't been idle for too long (optional check could be added here)
       return true;
     }
+
+    // Strategy 3: REMOVED (Lowest remaining fallback)
+    // This caused false positives when multiple models had the same low percentage
+    // It's better to show NO active model than the WRONG active model(s)
 
     return false;
   }

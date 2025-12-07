@@ -60,14 +60,13 @@ export class StatusBarManager implements vscode.Disposable {
   update(snapshot: SnapshotWithInsights, config: ExtensionConfig): void {
     this.currentSnapshot = snapshot;
 
-    // Determine what to show based on pinned models or health
     let displayText: string;
     let icon: string;
 
     const pinnedModels = config.pinnedModels || [];
     
     if (pinnedModels.length > 0) {
-      // Show pinned model status
+      // Show pinned model status if user has configured it
       const pinnedModel = snapshot.modelsWithInsights.find(
         m => pinnedModels.includes(m.modelId) || pinnedModels.includes(m.label)
       );
@@ -77,19 +76,12 @@ export class StatusBarManager implements vscode.Disposable {
         displayText = `${this.getShortName(pinnedModel.label)}: ${pinnedModel.remainingPercent}%`;
       } else {
         icon = this.getHealthIcon(snapshot.overallHealth, config.alertThreshold);
-        displayText = `Health: ${snapshot.overallHealth}%`;
-      }
-    } else {
-      // Show overall health or active model
-      const activeModel = snapshot.modelsWithInsights.find(m => m.insights.isActive);
-      
-      if (activeModel) {
-        icon = this.getHealthIcon(activeModel.remainingPercent, config.alertThreshold);
-        displayText = `${this.getShortName(activeModel.label)}: ${activeModel.remainingPercent}%`;
-      } else {
-        icon = this.getHealthIcon(snapshot.overallHealth, config.alertThreshold);
         displayText = `Quota: ${snapshot.overallHealth}%`;
       }
+    } else {
+      // Always show overall health - more reliable than trying to detect active model
+      icon = this.getHealthIcon(snapshot.overallHealth, config.alertThreshold);
+      displayText = `Quota: ${snapshot.overallHealth}%`;
     }
 
     this.statusBarItem.text = `${icon} ${displayText}`;
@@ -127,20 +119,55 @@ export class StatusBarManager implements vscode.Disposable {
   }
 
   /**
-   * Get short model name
+   * Get short model name for status bar display
+   * Returns a readable but compact name
    */
   private getShortName(label: string): string {
+    // Claude models: "Claude Opus 4.5" -> "Claude Opus"
     if (label.includes('Claude')) {
       const match = label.match(/Claude\s+(\w+)/);
-      return match ? `C-${match[1].substring(0, 3)}` : 'Claude';
+      if (match) {
+        const variant = match[1]; // Opus, Sonnet, etc.
+        return `Claude ${variant}`;
+      }
+      return 'Claude';
     }
+    
+    // Gemini models: "Gemini 3 Pro (High)" -> "Gemini Pro"
     if (label.includes('Gemini')) {
-      if (label.includes('Pro')) return 'G-Pro';
-      if (label.includes('Flash')) return 'G-Flash';
-      return 'Gemini';
+      const isHigh = label.includes('High');
+      const isPro = label.includes('Pro');
+      const isFlash = label.includes('Flash');
+      
+      let name = 'Gemini';
+      if (isPro) name = 'Gemini Pro';
+      else if (isFlash) name = 'Gemini Flash';
+      
+      // Add indicator for High tier
+      if (isHigh) name += ' ↑';
+      return name;
     }
-    if (label.includes('GPT')) return 'GPT';
-    return label.split(' ')[0].substring(0, 5);
+    
+    // GPT/OpenAI models
+    if (label.includes('GPT')) {
+      const match = label.match(/GPT[\s-]*(\S+)/);
+      if (match) {
+        return `GPT-${match[1]}`;
+      }
+      return 'GPT';
+    }
+    
+    // O3 models
+    if (label.includes('O3')) {
+      return 'O3';
+    }
+    
+    // Other models: take first two words or first 10 chars
+    const words = label.split(' ');
+    if (words.length >= 2) {
+      return `${words[0]} ${words[1]}`.substring(0, 15);
+    }
+    return label.substring(0, 10);
   }
 
   /**
@@ -153,7 +180,7 @@ export class StatusBarManager implements vscode.Disposable {
   }
 
   /**
-   * Build tooltip content
+   * Build tooltip content showing all models uniformly
    */
   private buildTooltip(snapshot: SnapshotWithInsights): vscode.MarkdownString {
     const md = new vscode.MarkdownString();
@@ -167,14 +194,17 @@ export class StatusBarManager implements vscode.Disposable {
       md.appendMarkdown(`**Prompt Credits:** ${snapshot.promptCredits.available.toLocaleString()} / ${snapshot.promptCredits.monthly.toLocaleString()}\n\n`);
     }
 
-    md.appendMarkdown(`---\n\n`);
     md.appendMarkdown(`**Models:**\n\n`);
 
-    for (const model of snapshot.modelsWithInsights.slice(0, 5)) {
-      const icon = model.insights.isActive ? '▶ ' : '';
+    // Sort models by remaining percent (lowest first) for easy scanning
+    const sortedModels = [...snapshot.modelsWithInsights]
+      .sort((a, b) => a.remainingPercent - b.remainingPercent)
+      .slice(0, 8);
+
+    for (const model of sortedModels) {
       const status = this.getHealthEmoji(model.remainingPercent, 20);
-      md.appendMarkdown(`${icon}${status} **${model.label}**: ${model.remainingPercent}%\n`);
-      md.appendMarkdown(`   ↳ Reset: ${model.timeUntilResetFormatted} | ETA: ${model.insights.predictedExhaustionLabel}\n\n`);
+      md.appendMarkdown(`${status} **${model.label}**: ${model.remainingPercent}%`);
+      md.appendMarkdown(` ↳ Reset: ${model.timeUntilResetFormatted} | ETA Empty: ${model.insights.predictedExhaustionLabel}\n\n`);
     }
 
     md.appendMarkdown(`---\n\n`);
