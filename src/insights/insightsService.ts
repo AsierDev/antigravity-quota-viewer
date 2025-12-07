@@ -172,9 +172,6 @@ export class InsightsService {
   /**
    * Detect if this is the active model
    */
-  /**
-   * Detect if this is the active model
-   */
   private detectActiveModel(model: ModelQuota, snapshot: QuotaSnapshot): boolean {
     // Strategy 1: Significant Burn Rate (consumption per hour)
     // Only consider active if consumption is clearly visible (> 1% per hour)

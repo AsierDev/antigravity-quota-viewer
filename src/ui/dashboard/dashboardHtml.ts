@@ -408,11 +408,24 @@ export function generateDashboardHtml(snapshot: SnapshotWithInsights, nonce: str
       animation: pulse 1.5s infinite;
     }
 
-    /* Utility */
+    /* Utility color classes */
     .green { color: var(--accent-green); }
     .yellow { color: var(--accent-yellow); }
     .red { color: var(--accent-red); }
     .blue { color: var(--accent-blue); }
+    
+    /* Health-based colors */
+    .health-green { color: var(--accent-green); }
+    .health-yellow { color: var(--accent-yellow); }
+    .health-red { color: var(--accent-red); }
+    
+    .stroke-green { stroke: var(--accent-green); }
+    .stroke-yellow { stroke: var(--accent-yellow); }
+    .stroke-red { stroke: var(--accent-red); }
+    
+    .bg-green { background: var(--accent-green); }
+    .bg-yellow { background: var(--accent-yellow); }
+    .bg-red { background: var(--accent-red); }
   </style>
 </head>
 <body>
@@ -424,11 +437,18 @@ export function generateDashboardHtml(snapshot: SnapshotWithInsights, nonce: str
   <script nonce="${nonce}">
     // Animate progress on load
     document.addEventListener('DOMContentLoaded', () => {
+      // Animate donut charts
       document.querySelectorAll('.donut-progress').forEach(el => {
         const value = parseFloat(el.dataset.value) || 0;
         const circumference = 2 * Math.PI * 32;
         const offset = circumference - (value / 100) * circumference;
         el.style.strokeDashoffset = offset;
+      });
+      
+      // Animate progress bars
+      document.querySelectorAll('[data-width]').forEach(el => {
+        const width = el.dataset.width || 0;
+        el.style.width = width + '%';
       });
     });
   </script>
@@ -437,7 +457,7 @@ export function generateDashboardHtml(snapshot: SnapshotWithInsights, nonce: str
 }
 
 function generateHeaderHtml(snapshot: SnapshotWithInsights): string {
-  const healthColor = getHealthColor(snapshot.overallHealth);
+  const healthClass = getHealthClass(snapshot.overallHealth);
   const circumference = 2 * Math.PI * 32;
   const offset = circumference - (snapshot.overallHealth / 100) * circumference;
 
@@ -453,14 +473,13 @@ function generateHeaderHtml(snapshot: SnapshotWithInsights): string {
             <svg width="80" height="80" viewBox="0 0 80 80">
               <circle class="health-ring-bg" cx="40" cy="40" r="32"></circle>
               <circle 
-                class="health-ring-progress" 
+                class="health-ring-progress stroke-${healthClass}" 
                 cx="40" cy="40" r="32"
-                stroke="${healthColor}"
                 stroke-dasharray="${circumference}"
                 stroke-dashoffset="${offset}"
               ></circle>
             </svg>
-            <span class="health-ring-text" style="color: ${healthColor}">${snapshot.overallHealth}%</span>
+            <span class="health-ring-text health-${healthClass}">${snapshot.overallHealth}%</span>
           </div>
           <div class="stat-label">Overall Health</div>
         </div>
@@ -491,7 +510,7 @@ function generateModelsHtml(models: ModelWithInsights[]): string {
 }
 
 function generateModelCard(model: ModelWithInsights): string {
-  const color = getHealthColor(model.remainingPercent);
+  const healthClass = getHealthClass(model.remainingPercent);
   const circumference = 2 * Math.PI * 32;
   const cardClass = model.insights.isActive ? 'active' : (model.isExhausted ? 'exhausted' : '');
 
@@ -502,7 +521,7 @@ function generateModelCard(model: ModelWithInsights): string {
           ${model.label}
           ${model.insights.isActive ? '<span class="active-badge">ACTIVE</span>' : ''}
         </div>
-        <div class="model-percent" style="color: ${color}">${model.remainingPercent}%</div>
+        <div class="model-percent health-${healthClass}">${model.remainingPercent}%</div>
       </div>
       
       <div class="donut-container">
@@ -510,9 +529,8 @@ function generateModelCard(model: ModelWithInsights): string {
           <svg width="80" height="80" viewBox="0 0 80 80">
             <circle class="donut-bg" cx="40" cy="40" r="32"></circle>
             <circle 
-              class="donut-progress" 
+              class="donut-progress stroke-${healthClass}" 
               cx="40" cy="40" r="32"
-              stroke="${color}"
               stroke-dasharray="${circumference}"
               stroke-dashoffset="${circumference}"
               data-value="${model.remainingPercent}"
@@ -526,7 +544,7 @@ function generateModelCard(model: ModelWithInsights): string {
         
         <div class="progress-container">
           <div class="progress-bar">
-            <div class="progress-fill" style="width: ${model.remainingPercent}%; background: ${color}"></div>
+            <div class="progress-fill bg-${healthClass}" data-width="${model.remainingPercent}"></div>
           </div>
           <div class="progress-labels">
             <span>0%</span>
@@ -568,7 +586,7 @@ function generateCreditsHtml(credits: PromptCredits): string {
         <span class="credits-value">${credits.available.toLocaleString()} / ${credits.monthly.toLocaleString()}</span>
       </div>
       <div class="credits-bar">
-        <div class="credits-fill" style="width: ${remaining}%"></div>
+        <div class="credits-fill" data-width="${remaining}"></div>
       </div>
       <div class="credits-labels">
         <span>Used: ${Math.round(credits.usedPercentage)}%</span>
@@ -578,9 +596,8 @@ function generateCreditsHtml(credits: PromptCredits): string {
   `;
 }
 
-function getHealthColor(percent: number): string {
-  if (percent <= 10) return '#f85149';
-  if (percent <= 25) return '#d29922';
-  if (percent <= 50) return '#d29922';
-  return '#3fb950';
+function getHealthClass(percent: number): string {
+  if (percent <= 10) return 'red';
+  if (percent <= 50) return 'yellow';
+  return 'green';
 }
