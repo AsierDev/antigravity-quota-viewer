@@ -36,7 +36,7 @@ You can install the extension directly from your favorite marketplace:
 
 ### Manual Installation
 
-1. Download the `.vsix` file from the [Releases](https://github.com/AsierDev/antigravity_cuota_viewer/releases) page.
+1. Download the `.vsix` file from the [Releases](https://github.com/AsierDev/antigravity-quota-viewer/releases) page.
 2. Open Antigravity IDE
 3. Extensions → `...` → **Install from VSIX**
 4. Select the downloaded file
@@ -103,8 +103,8 @@ The dashboard displays:
 
 ```bash
 # Clone repository
-git clone https://github.com/AsierDev/antigravity_cuota_viewer
-cd antigravity_cuota_viewer
+git clone https://github.com/AsierDev/antigravity-quota-viewer
+cd antigravity-quota-viewer
 
 # Install dependencies
 npm install
@@ -181,7 +181,7 @@ Contributions are welcome!
 
 ## 🐛 Issues
 
-Report bugs or request features on [GitHub Issues](https://github.com/AsierDev/antigravity_cuota_viewer/issues)
+Report bugs or request features on [GitHub Issues](https://github.com/AsierDev/antigravity-quota-viewer/issues)
 
 ## 📄 License
 
@@ -240,7 +240,7 @@ Puedes instalar la extensión directamente desde tu marketplace favorito:
 
 ### Instalación Manual
 
-1. Descarga el archivo `.vsix` desde la página de [Releases](https://github.com/AsierDev/antigravity_cuota_viewer/releases).
+1. Descarga el archivo `.vsix` desde la página de [Releases](https://github.com/AsierDev/antigravity-quota-viewer/releases).
 2. Abrir Antigravity IDE
 3. Extensions → `...` → **Install from VSIX**
 4. Seleccionar el archivo descargado
@@ -307,7 +307,7 @@ El dashboard muestra:
 
 ```bash
 # Clonar repositorio
-git clone https://github.com/asier/antigravity-quota-viewer
+git clone https://github.com/AsierDev/antigravity-quota-viewer
 cd antigravity-quota-viewer
 
 # Instalar dependencias
@@ -385,7 +385,7 @@ Las contribuciones son bienvenidas!
 
 ## 🐛 Issues
 
-Reporta bugs o pide features en [GitHub Issues](https://github.com/asier/antigravity-quota-viewer/issues)
+Reporta bugs o pide features en [GitHub Issues](https://github.com/AsierDev/antigravity-quota-viewer/issues)
 
 ## 📄 License
 
