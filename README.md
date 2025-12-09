@@ -1,6 +1,6 @@
 # ⚡ Antigravity Quota Viewer
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
+
 [![Open VSX](https://img.shields.io/open-vsx/v/asierdev/antigravity-quota-viewer?color=purple&label=Open%20VSX)](https://open-vsx.org/extension/asierdev/antigravity-quota-viewer)
 [![VS Code Marketplace](https://img.shields.io/visual-studio-marketplace/v/asierdev.antigravity-quota-viewer?color=blue&label=VS%20Code%20Marketplace&logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=asierdev.antigravity-quota-viewer)
 ![License](https://img.shields.io/badge/license-MIT-green)
@@ -204,7 +204,7 @@ MIT © 2025
 
 [🇺🇸 English Version](#-antigravity-quota-viewer)
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
+
 [![Open VSX](https://img.shields.io/open-vsx/v/asierdev/antigravity-quota-viewer?color=purple&label=Open%20VSX)](https://open-vsx.org/extension/asierdev/antigravity-quota-viewer)
 [![VS Code Marketplace](https://img.shields.io/visual-studio-marketplace/v/asierdev.antigravity-quota-viewer?color=blue&label=VS%20Code%20Marketplace&logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=asierdev.antigravity-quota-viewer)
 ![License](https://img.shields.io/badge/license-MIT-green)
