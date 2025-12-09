@@ -2,7 +2,7 @@
     "name": "antigravity-quota-viewer",
     "displayName": "Antigravity Quota Viewer",
     "description": "Visualización exhaustiva del estado de cuotas de modelos AI en Antigravity con análisis predictivo y dashboard moderno",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "publisher": "asierdev",
     "icon": "assets/icon.png",
     "engines": {
