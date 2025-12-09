@@ -83,7 +83,10 @@
         "test": "jest",
         "test:watch": "jest --watch",
         "test:coverage": "jest --coverage",
-        "package": "npm run compile && npx @vscode/vsce package"
+        "package": "npm run compile && npx @vscode/vsce package",
+        "release:patch": "./scripts/release.sh patch",
+        "release:minor": "./scripts/release.sh minor",
+        "release:major": "./scripts/release.sh major"
     },
     "devDependencies": {
         "@types/jest": "^30.0.0",

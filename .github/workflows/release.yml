@@ -1,0 +1,84 @@
+name: Release Extension
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Compile TypeScript
+        run: npm run compile
+
+      - name: Package extension
+        run: npx @vscode/vsce package
+
+      - name: Get version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          body: |
+            ## Changes in this Release
+            
+            <!-- Add your release notes here -->
+            
+            ## Installation
+            
+            ### From Marketplace
+            - Install from [OpenVSX](https://open-vsx.org/extension/asierdev/antigravity-quota-viewer)
+            
+            ### Manual Installation
+            1. Download the `.vsix` file below
+            2. Open Antigravity IDE
+            3. Go to Extensions → ... → Install from VSIX
+            4. Select the downloaded file
+
+      - name: Upload VSIX to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./antigravity-quota-viewer-${{ steps.get_version.outputs.VERSION }}.vsix
+          asset_name: antigravity-quota-viewer-${{ steps.get_version.outputs.VERSION }}.vsix
+          asset_content_type: application/octet-stream
+
+      - name: Publish to OpenVSX
+        if: success()
+        run: |
+          npx ovsx publish antigravity-quota-viewer-${{ steps.get_version.outputs.VERSION }}.vsix -p ${{ secrets.OPENVSX_TOKEN }}
+        continue-on-error: true
+
+      - name: Publish to VS Code Marketplace
+        if: success()
+        run: |
+          npx @vscode/vsce publish -p ${{ secrets.VSCE_TOKEN }}
+        continue-on-error: true
